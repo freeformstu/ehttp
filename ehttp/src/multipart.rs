@@ -78,7 +78,7 @@ impl MultipartBuilder {
     ///
     /// * name file field name
     /// * path the sending file path
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     pub fn add_file<P: AsRef<std::path::Path>>(self, name: &str, path: P) -> io::Result<Self> {
         fn mime_filename(path: &std::path::Path) -> (Mime, Option<&str>) {
             let content_type = mime_guess::from_path(path);

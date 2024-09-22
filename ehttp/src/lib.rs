@@ -37,10 +37,10 @@
 /// * A browser extension blocked the request (e.g. ad blocker)
 /// * …
 pub fn fetch(request: Request, on_done: impl 'static + Send + FnOnce(Result<Response>)) {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     native::fetch(request, Box::new(on_done));
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_family = "wasm")]
     web::fetch(request, Box::new(on_done));
 }
 
@@ -63,29 +63,29 @@ pub fn fetch(request: Request, on_done: impl 'static + Send + FnOnce(Result<Resp
 /// * The initial GET which returned HTML contained CSP headers to block access to the resource
 /// * A browser extension blocked the request (e.g. ad blocker)
 /// * …
-#[cfg(any(target_arch = "wasm32", feature = "native-async"))]
+#[cfg(any(target_family = "wasm", feature = "native-async"))]
 pub async fn fetch_async(request: Request) -> Result<Response> {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     return native::fetch_async(request).await;
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_family = "wasm")]
     return web::fetch_async(&request).await;
 }
 
 mod types;
 pub use types::{Error, Headers, PartialResponse, Request, Response, Result};
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 pub use types::Mode;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_family = "wasm"))]
 mod native;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_family = "wasm"))]
 pub use native::fetch_blocking;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 mod web;
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 pub use web::spawn_future;
 
 #[cfg(feature = "streaming")]

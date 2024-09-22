@@ -56,21 +56,21 @@ pub fn fetch(
     request: Request,
     on_data: impl 'static + Send + Fn(crate::Result<types::Part>) -> ControlFlow<()>,
 ) {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     native::fetch_streaming(request, Box::new(on_data));
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_family = "wasm")]
     web::fetch_streaming(request, Box::new(on_data));
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_family = "wasm"))]
 mod native;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_family = "wasm"))]
 pub use native::fetch_streaming_blocking;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 mod web;
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 pub use web::fetch_async_streaming;
 
 mod types;

@@ -114,7 +114,7 @@ pub enum Mode {
     Navigate = 3,
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 impl From<Mode> for web_sys::RequestMode {
     fn from(mode: Mode) -> Self {
         match mode {
